@@ -2,7 +2,7 @@
 EFFOcc: A Minimal Baseline for EFficient Fusion-based 3D Occupancy Network
 
 ## Demo videos
-We first provide lidar-camera occupancy prediction video of Occ3D-nuScenes dataset. 
+We provide lidar-camera occupancy prediction video of Occ3D-nuScenes dataset. 
 
 https://github.com/synsin0/EFFOcc/assets/37300008/6ab8238f-1d7f-4e4b-b4de-daff6a99ba41
 
@@ -17,6 +17,7 @@ EFFOcc on Occ3D-Waymo dataset:
 ![teaser](assets/effocc_occ3d_waymo.png)
 EFFOcc on OpenOccupancy-nuScenes dataset:
 ![teaser](assets/effocc_openoccupancy.png)
+
 EFFOcc on two-stage active learning setting:
 ![teaser](assets/effocc_activate_learning.png)
 
