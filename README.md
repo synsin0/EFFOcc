@@ -31,7 +31,6 @@ Exps on OpenOccupancy-nuScenes:
 | Settings        | Fusion Model | 
 | ----- | ----- |
 | 100%            |  Fusion-R18 [CFG](configs/effocc_openoccupancy/effocc-fusion-r18.py) [CKPT](https://cloud.tsinghua.edu.cn/f/b7f2c9d684744b939c8e/?dl=1)   |
-
 | 100%            |  Fusion-R50 [CFG](configs/effocc_openoccupancy/effocc-fusion-r50.py) [CKPT]()   |
 
 
