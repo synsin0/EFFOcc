@@ -40,12 +40,7 @@ voxel_size = [0.1, 0.1, 0.2]
 numC_Trans = 64
 
 model = dict(
-    type='DistillFlashBEVDetOCC',
-    teacher_config = 'configs/flashocc/flashocc-fusion-r18_pretrain.py',
-    teacher_ckpt = 'work_dirs/flashocc-fusion-r18_pretrain/epoch_24.pth',
-    inherit_head=True,
-    distill_type='fgbg_bev',
-    # 'ckpts/fusionocc/flashocc_fusion_nusc_miou49_46.pth',
+    type='FlashBEVDetOCC',
     img_backbone=dict(
         type='ResNet',
         depth=50,
@@ -81,10 +76,10 @@ model = dict(
     img_bev_encoder_neck=dict(
         type='FPN_LSS',
         in_channels=numC_Trans * 8 + numC_Trans * 2,
-        out_channels=512),
+        out_channels=256),
     occ_head=dict(
         type='BEVOCCHead2D',
-        in_dim=512,
+        in_dim=256,
         out_dim=256,
         Dz=16,
         use_mask=True,
@@ -112,57 +107,13 @@ bda_aug_conf = dict(
     flip_dy_ratio=0.5
 )
 
-# train_pipeline = [
-#     dict(
-#         type='PrepareImageInputs',
-#         is_train=True,
-#         data_config=data_config,
-#         sequential=False),
-
-#     # dict(
-#     #     type='LoadAnnotationsBEVDepth',
-#     #     bda_aug_conf=bda_aug_conf,
-#     #     classes=class_names,
-#     #     is_train=True),
-#     dict(type='LoadOccGTFromFile'),
-#     dict(type='LoadAnnotations'),
-#     dict(
-#         type='BEVAug',
-#         bda_aug_conf=bda_aug_conf,
-#         classes=class_names),
-#     dict(
-#         type='LoadPointsFromFile',
-#         coord_type='LIDAR',
-#         load_dim=5,
-#         use_dim=5,
-#         file_client_args=file_client_args),
-#     dict(type='PointToMultiViewDepth', downsample=1, grid_config=grid_config),
-#     dict(type='DefaultFormatBundle3D', class_names=class_names),
-#     dict(
-#         type='Collect3D', keys=['img_inputs', 'gt_depth', 'voxel_semantics',
-#                                 'mask_lidar', 'mask_camera'])
-# ]
-
 train_pipeline = [
     dict(
         type='PrepareImageInputs',
         is_train=True,
         data_config=data_config,
         sequential=False),
-    dict(
-        type='LoadPointsFromFile',
-        coord_type='LIDAR',
-        load_dim=5,
-        use_dim=5,
-        file_client_args=file_client_args),
-    dict(
-        type='LoadPointsFromMultiSweeps',
-        sweeps_num=9,
-        use_dim=[0, 1, 2, 3, 4],
-        file_client_args=file_client_args,
-        pad_empty_sweeps=True,
-        remove_close=True),
-    dict(type='ToEgo'), 
+
     # dict(
     #     type='LoadAnnotationsBEVDepth',
     #     bda_aug_conf=bda_aug_conf,
@@ -174,31 +125,21 @@ train_pipeline = [
         type='BEVAug',
         bda_aug_conf=bda_aug_conf,
         classes=class_names),
-
-    dict(type='PointToMultiViewDepthFusion', downsample=1, grid_config=grid_config),
-
-    dict(type='DefaultFormatBundle3D', class_names=class_names),
-    dict(
-        type='Collect3D', keys=['points', 'img_inputs', 'gt_depth', 'voxel_semantics',
-                                'mask_lidar', 'mask_camera'])
-]
-
-test_pipeline = [
-    dict(type='PrepareImageInputs', data_config=data_config, sequential=False),
     dict(
         type='LoadPointsFromFile',
         coord_type='LIDAR',
         load_dim=5,
         use_dim=5,
         file_client_args=file_client_args),
+    dict(type='PointToMultiViewDepth', downsample=1, grid_config=grid_config),
+    dict(type='DefaultFormatBundle3D', class_names=class_names),
     dict(
-        type='LoadPointsFromMultiSweeps',
-        sweeps_num=9,
-        use_dim=[0, 1, 2, 3, 4],
-        file_client_args=file_client_args,
-        pad_empty_sweeps=True,
-        remove_close=True),
-    dict(type='ToEgo'),
+        type='Collect3D', keys=['img_inputs', 'gt_depth', 'voxel_semantics',
+                                'mask_lidar', 'mask_camera'])
+]
+
+test_pipeline = [
+    dict(type='PrepareImageInputs', data_config=data_config, sequential=False),
     # dict(
     #     type='LoadAnnotationsBEVDepth',
     #     bda_aug_conf=bda_aug_conf,
@@ -209,14 +150,12 @@ test_pipeline = [
          bda_aug_conf=bda_aug_conf,
          classes=class_names,
          is_train=False),
-    dict(type='PointToMultiViewDepthFusion', downsample=1,
-         grid_config=grid_config),
-    # dict(
-    #     type='LoadPointsFromFile',
-    #     coord_type='LIDAR',
-    #     load_dim=5,
-    #     use_dim=5,
-    #     file_client_args=file_client_args),
+    dict(
+        type='LoadPointsFromFile',
+        coord_type='LIDAR',
+        load_dim=5,
+        use_dim=5,
+        file_client_args=file_client_args),
     dict(
         type='MultiScaleFlipAug3D',
         img_scale=(1333, 800),
@@ -227,7 +166,7 @@ test_pipeline = [
                 type='DefaultFormatBundle3D',
                 class_names=class_names,
                 with_label=False),
-            dict(type='Collect3D', keys=['points', 'img_inputs', 'gt_depth'])
+            dict(type='Collect3D', keys=['points', 'img_inputs'])
         ])
 ]
 
@@ -263,7 +202,9 @@ data = dict(
         classes=class_names,
         test_mode=False,
         use_valid_flag=True,
-        use_sequences_as_labeled=140,
+        load_interval=1,
+        load_sequences=280,
+        # load_interval = 100,
         # we use box_type_3d='LiDAR' in kitti and nuscenes dataset
         # and box_type_3d='Depth' in sunrgbd and scannet dataset.
         box_type_3d='LiDAR'),
@@ -292,33 +233,7 @@ custom_hooks = [
     ),
 ]
 
-load_from = "ckpts/bevdet/bevdet-r50-cbgs.pth"
-
-
+# load_from = "ckpts/bevdet/bevdet-r50-cbgs.pth"
 # fp16 = dict(loss_scale='dynamic')
 evaluation = dict(interval=1, start=20, pipeline=test_pipeline)
-checkpoint_config = dict(interval=1, max_keep_ckpts=5)
-
-
-# ===> per class IoU of 6019 samples:
-# ===> others - IoU = 6.85
-# ===> barrier - IoU = 40.86
-# ===> bicycle - IoU = 13.61
-# ===> bus - IoU = 40.08
-# ===> car - IoU = 46.67
-# ===> construction_vehicle - IoU = 18.52
-# ===> motorcycle - IoU = 18.01
-# ===> pedestrian - IoU = 19.0
-# ===> traffic_cone - IoU = 19.38
-# ===> trailer - IoU = 31.17
-# ===> truck - IoU = 33.57
-# ===> driveable_surface - IoU = 78.41
-# ===> other_flat - IoU = 38.44
-# ===> sidewalk - IoU = 48.11
-# ===> terrain - IoU = 52.17
-# ===> manmade - IoU = 38.76
-# ===> vegetation - IoU = 32.54
-# ===> mIoU of 6019 samples: 33.89
-# {'others': 6.85, 'barrier': 40.86, 'bicycle': 13.61, 'bus': 40.08, 'car': 46.67, 'construction_vehicle': 18.52, 'motorcycle': 18.01, 'pedestrian': 19.0, 'traffic_cone': 19.38, 'trailer': 31.17, 'truck': 33.57, 'driveable_surface': 78.41, 'other_flat': 38.44, 'sidewalk': 48.11, 'terrain': 52.17, 'manmade': 38.76, 'vegetation': 32.54, 'mIoU': 33.89}
-
-# use_sequences_as_labeled
+checkpoint_config = dict(interval=1, max_keep_ckpts=1)
