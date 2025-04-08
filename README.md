@@ -5,7 +5,7 @@ EFFOcc: Learning Efficient Occupancy Networks from Minimal Labels for Autonomous
 ## Demo videos
 The project demo videos.
 
-https://github.com/user-attachments/assets/55fe0d54-a7bf-4e80-bb96-16e718116a55
+https://github.com/user-attachments/assets/68c54301-257e-40f7-9de8-e9a0d828644c
 
 
 The lidar-camera occupancy prediction video of Occ3D-nuScenes dataset. 
