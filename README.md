@@ -1,10 +1,21 @@
 # EFFOcc
-EFFOcc: A Minimal Baseline for EFficient Fusion-based 3D Occupancy Network
+EFFOcc: Learning Efficient Occupancy Networks from Minimal Labels for Autonomous Driving
+(Old title: EFFOcc: A Minimal Baseline for EFficient Fusion-based 3D Occupancy Network)
 
 ## Demo videos
-We provide lidar-camera occupancy prediction video of Occ3D-nuScenes dataset. 
+The project demo videos.
+
+https://github.com/user-attachments/assets/55fe0d54-a7bf-4e80-bb96-16e718116a55
+
+
+The lidar-camera occupancy prediction video of Occ3D-nuScenes dataset. 
 
 https://github.com/synsin0/EFFOcc/assets/37300008/6ab8238f-1d7f-4e4b-b4de-daff6a99ba41
+
+
+## Abstract
+3D occupancy prediction (3DOcc) is a rapidly rising and challenging perception task in the field of autonomous driving. Existing 3D occupancy networks (OccNets) are both computationally heavy and label-hungry. In terms of model complexity, OccNets are commonly composed of heavy Conv3D modules or transformers at the voxel level. Moreover, OccNets are supervised with expensive large-scale dense voxel labels. Model and data inefficiencies, caused by excessive network parameters and label annotation requirements, severely hinder the onboard deployment of OccNets. This paper proposes an EFFicient Occupancy learning framework, EFFOcc, that targets minimal network complexity and label requirements while achieving state-of-the-art accuracy. We first propose an efficient fusion-based OccNet that only uses simple 2D operators and improves accuracy to the state-of-the-art on three large-scale benchmarks: Occ3D-nuScenes, Occ3D-Waymo, and OpenOccupancy-nuScenes. On the Occ3D-nuScenes benchmark, the fusion-based model with ResNet-18 as the image backbone has 21.35M parameters and achieves 51.49 in terms of mean Intersection over Union (mIoU). Furthermore, we propose a multi-stage occupancy-oriented distillation to efficiently transfer knowledge to vision-only OccNet. Extensive experiments on occupancy benchmarks show state-of-the-art precision for both fusion-based and vision-based OccNets. For the demonstration of learning with limited labels, we achieve 94.38\% of the performance (mIoU = 28.38) of a 100\% labeled vision OccNet (mIoU = 30.07) using the same OccNet trained with only 40\% labeled sequences and distillation from the fusion-based OccNet.
+
 
 ## Data Setup
 We follow the setups of [BEVDet](https://github.com/HuangJunJie2017/BEVDet) for data preprocessing of nuScenes dataset.
@@ -52,8 +63,6 @@ Exps on Occ3D-Waymo (Checkpoints not allowed to share under Waymo's regulation):
 
 
 
-## Abstract（TL DR）
-EFFOcc explores towards the minimal (minimal computation costs and minimal label costs) baseline for fast and high-performance 3D occupancy prediction with lidar-camera fusion. We show lightweight BEV-based fusion occnet can perform as well as voxel-based fusion occnets.
 
 
 ## Acknowledgements
