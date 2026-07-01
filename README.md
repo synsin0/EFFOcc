@@ -2,6 +2,9 @@
 EFFOcc: Learning Efficient Occupancy Networks from Minimal Labels for Autonomous Driving
 (Old title: EFFOcc: A Minimal Baseline for EFficient Fusion-based 3D Occupancy Network)
 
+Clouddisk links will be deprecated. Checkpoints and other necessary infos are updated at [huggingface](https://huggingface.co/synsin0/effocc).
+
+
 ## Demo videos
 The project demo videos.
 
